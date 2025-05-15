@@ -1,0 +1,17 @@
+name: Enforce PR source branch
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check_pr_source:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR source branch
+        if: github.event.pull_request.head.ref != 'release'
+        run: |
+          echo "Pull requests into main are only allowed from the release branch."
+          exit 1
