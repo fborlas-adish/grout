@@ -51,8 +51,10 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "devise", "~> 4.9"
 
-gem "shakapacker", "= 8.1"
+gem "shakapacker", "= 8.3"
 
-gem "react-rails", "= 3.2"
+gem "react-rails", "= 3.2.1"
 
 gem "tailwindcss-rails", "2.0.24"
+
+gem 'activeadmin'

@@ -2,5 +2,6 @@
 const { generateWebpackConfig } = require('shakapacker')
 
 const webpackConfig = generateWebpackConfig()
+webpackConfig.ignoreWarnings = [/Module not found: Error: Can't resolve 'react-dom\/client'/];
 
-module.exports = webpackConfig
+module.exports = webpackConfig;
