@@ -1,9 +1,20 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Card from "../shared/Card"
 import axios from 'axios';
+import PropTypes from "prop-types"
+import moment from "moment-timezone";
 
-const Home = () => {
-  const [status, setStatus] = useState('in');
+const STATUS = ["in", "out"];
+
+const Home = ({ timesheetList }) => {
+  const [status, setStatus] = useState(STATUS[0]);
+  const [timesheet, setTimesheet] = useState(timesheetList);
+
+  useEffect(() => {
+    const getLatestTimesheetStatus = timesheet && timesheet.length > 0 && timesheet[0].status;
+    
+    if (getLatestTimesheetStatus) setStatus(STATUS.filter(stat => stat != getLatestTimesheetStatus)[0]);
+  }, [timesheet])
 
   const handleSubmit = async () => {
     try {
@@ -21,7 +32,9 @@ const Home = () => {
       });
 
       alert('Timesheet created!');
-      console.log(response.data);
+      if (response.data && response.data.hasOwnProperty("id")) {
+        setTimesheet([response.data, ...timesheet]);
+      }
     } catch (error) {
       console.error(error);
       alert('Error creating timesheet');
@@ -29,69 +42,22 @@ const Home = () => {
   };
 
   const displayRecentAttendance = () => {
-    const testDate = [
-      {
-        time: "5:00PM",
-        date: "05/07/2025",
-        status: "OUT"
-      },
-      {
-        time: "6:43AM",
-        date: "05/07/2025",
-        status: "IN"
-      },
-      {
-        time: "5:13PM",
-        date: "05/06/2025",
-        status: "OUT"
-      },
-      {
-        time: "7:29AM",
-        date: "05/06/2025",
-        status: "IN"
-      },
-      {
-        time: "5:13PM",
-        date: "05/05/2025",
-        status: "OUT"
-      },
-      {
-        time: "7:29AM",
-        date: "05/05/2025",
-        status: "IN"
-      },
-      {
-        time: "5:13PM",
-        date: "05/04/2025",
-        status: "OUT"
-      },
-      {
-        time: "7:29AM",
-        date: "05/04/2025",
-        status: "IN"
-      },
-      {
-        time: "5:13PM",
-        date: "05/03/2025",
-        status: "OUT"
-      },
-      {
-        time: "7:29AM",
-        date: "05/03/2025",
-        status: "IN"
-      }
-    ];
+    const formatTime = (time) => {
+      return moment(time)
+        .tz("Asia/Manila")
+        .format("hh:mm A");
+    };
 
-    return testDate.map((item, index) => (
+    return timesheet.slice(0, 10).map((timesheet, index) => (
       <div className="flex justify-between" key={index}>
         <div>
-          {item.date}
+          {timesheet.date}
         </div>
         <div>
-          {item.status}
+          {timesheet.status.toUpperCase()}
         </div>
         <div>
-          {item.time}
+          {formatTime(timesheet.time)}
         </div>
       </div>
     ))
@@ -115,10 +81,10 @@ const Home = () => {
               {displayRecentAttendance()}
             </div>
             <div>
-              <button className="border-2 rounded-md border-purple-200 text-gray-700 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700 py-1 w-full mb-3" 
+              <button className="border-2 rounded-md border-purple-200 text-gray-700 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700 py-1 w-full mb-3"
                 onClick={handleSubmit}
               >
-                Time In
+                Time {status}
               </button>
             </div>
           </div>
@@ -130,8 +96,12 @@ const Home = () => {
           <p className="text-white">This card mimics a well or "hole" in the surface. Stylish and modern!</p>
         </Card>
       </div>
-    </div>      
+    </div>
   )
 }
+
+Home.propTypes = {
+  timesheetList: PropTypes.array
+};
 
 export default Home;

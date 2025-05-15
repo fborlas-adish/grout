@@ -14,7 +14,7 @@ const Card = ({children}) => {
 }
 
 Card.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element)
+  children: PropTypes.node
 };
 
 export default Card

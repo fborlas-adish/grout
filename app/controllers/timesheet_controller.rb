@@ -3,7 +3,6 @@ class TimesheetController < ApplicationController
   end
 
   def create
-    puts '===================TRIGGRED=================='
     @timesheet = Timesheet.new(timesheet_params.merge(user: current_user))
     @timesheet.date = Date.today
     @timesheet.time = Time.current
